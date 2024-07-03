@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import "./Login.css";
-
-import { login, logout } from "../features/userSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { loginAsync, selectUserStatus, selectUserError } from "../features/userSlice";
 
 const Login = () => {
   const [name, setName] = useState("");
@@ -10,16 +9,17 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const dispatch = useDispatch();
+  const status = useSelector(selectUserStatus);
+  const error = useSelector(selectUserError);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     dispatch(
-      login({
+      loginAsync({
         name: name,
         email: email,
         password: password,
-        loggedIn: true,
       })
     );
 
@@ -31,6 +31,8 @@ const Login = () => {
     <div className="login">
       <form className="login__form" onSubmit={(e) => handleSubmit(e)}>
         <h1>Login here 🚪</h1>
+        {status === 'loading' && <p>Loading...</p>}
+        {status === 'failed' && <p>Error: {error}</p>}
         <input
           type="name"
           placeholder="Name"
